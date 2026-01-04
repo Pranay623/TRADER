@@ -172,7 +172,13 @@ export function TradingProvider({ children }: { children: ReactNode }) {
     };
 
     const cancelOrder = (id: string) => {
-        setActiveOrders(prev => prev.filter(o => o.id !== id));
+        setActiveOrders(prev => {
+            // Find the order being cancelled to check if it's a parent
+            const orderToCancel = prev.find(o => o.id === id);
+
+            // Filter out the specific order and any children (orders with this id as parentId)
+            return prev.filter(o => o.id !== id && o.parentId !== id);
+        });
         playCancel(); // Audio Feedback
     };
 
