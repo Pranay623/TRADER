@@ -2,8 +2,20 @@
 
 import { useAPIKeys } from '@/hooks/useAPIKeys';
 import { getAccountInfo } from '@/lib/binance';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { useParams, useRouter } from 'next/navigation';
+
+export interface ActiveOrder {
+    id: string;
+    symbol: string;
+    side: 'BUY' | 'SELL';
+    price: number;
+    quantity: number;
+    timestamp: number;
+    type?: 'LIMIT' | 'STOP_LOSS' | 'TAKE_PROFIT';
+    parentId?: string;
+}
 
 interface TradingContextType {
     symbol: string;
@@ -14,6 +26,11 @@ interface TradingContextType {
     setLastPrice: (price: number) => void;
     accountInfo: any | null;
     refreshAccountInfo: () => Promise<void>;
+    activeOrders: ActiveOrder[];
+    addOrder: (order: Omit<ActiveOrder, 'id' | 'timestamp'>) => void;
+    updateOrderPrice: (id: string, newPrice: number) => void;
+    updateOrderQuantity: (id: string, newQuantity: number) => void;
+    cancelOrder: (id: string) => void;
 }
 
 const TradingContext = createContext<TradingContextType | undefined>(undefined);
@@ -129,6 +146,36 @@ export function TradingProvider({ children }: { children: ReactNode }) {
         };
     }, [symbol]);
 
+    const [activeOrders, setActiveOrders] = useState<ActiveOrder[]>([]);
+
+    // Audio Feedback
+    const { playSuccess, playModify, playCancel } = useSoundEffects();
+
+    const addOrder = (order: Omit<ActiveOrder, 'id' | 'timestamp'>) => {
+        const newOrder: ActiveOrder = {
+            ...order,
+            id: Math.random().toString(36).substr(2, 9),
+            timestamp: Date.now(),
+        };
+        setActiveOrders(prev => [...prev, newOrder]);
+        playSuccess(); // Audio Feedback
+    };
+
+    const updateOrderPrice = (id: string, newPrice: number) => {
+        setActiveOrders(prev => prev.map(o => o.id === id ? { ...o, price: newPrice } : o));
+        playModify(); // Audio Feedback
+    };
+
+    const updateOrderQuantity = (id: string, newQuantity: number) => {
+        setActiveOrders(prev => prev.map(o => o.id === id ? { ...o, quantity: newQuantity } : o));
+        playModify(); // Audio Feedback
+    };
+
+    const cancelOrder = (id: string) => {
+        setActiveOrders(prev => prev.filter(o => o.id !== id));
+        playCancel(); // Audio Feedback
+    };
+
     return (
         <TradingContext.Provider
             value={{
@@ -140,6 +187,11 @@ export function TradingProvider({ children }: { children: ReactNode }) {
                 setLastPrice,
                 accountInfo,
                 refreshAccountInfo: fetchAccount,
+                activeOrders,
+                addOrder,
+                updateOrderPrice,
+                updateOrderQuantity,
+                cancelOrder,
             }}
         >
             {children}
