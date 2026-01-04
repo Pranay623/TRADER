@@ -86,7 +86,7 @@ export const ChartComponent = () => {
 
         const ro = new ResizeObserver(entries => {
             const { width, height } = entries[0].contentRect;
-            chart.applyOptions({ width, height });
+                chart.applyOptions({ width, height });
         });
 
         ro.observe(containerRef.current);
@@ -191,20 +191,21 @@ export const ChartComponent = () => {
     const isUp = changePct !== null && changePct >= 0;
 
     return (
-        <div className="flex flex-col h-full rounded-xl border border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-900 p-4">
-            <div className="flex justify-between items-center mb-4">
+        <div className="flex flex-col h-full p-2">
+            <div className="flex justify-between items-center mb-2 px-1">
+                {/* Price and Details */}
                 <div>
-                    <div className="text-sm text-neutral-500">{symbol}</div>
+                    {/* Clean header - symbol is already in the drag handle */}
                     <div className="flex items-center gap-2">
-                        <span className="text-2xl font-bold">
+                        <span className="text-2xl font-bold tracking-tight text-neutral-900 dark:text-white">
                             {lastPrice ? `$${lastPrice.toLocaleString()}` : '—'}
                         </span>
                         {changePct !== null && (
                             <span
                                 className={`text-xs px-2 py-0.5 rounded-full font-medium
                 ${isUp
-                                        ? 'bg-green-100 text-green-600'
-                                        : 'bg-red-100 text-red-600'
+                                        ? 'bg-green-100 text-green-700 dark:bg-green-500/20 dark:text-green-400'
+                                        : 'bg-red-100 text-red-700 dark:bg-red-500/20 dark:text-red-400'
                                     }`}
                             >
                                 {isUp ? '+' : ''}
@@ -214,15 +215,16 @@ export const ChartComponent = () => {
                     </div>
                 </div>
 
-                <div className="flex rounded-full border border-neutral-200 dark:border-neutral-700 overflow-hidden">
+                {/* Timeframe Selector */}
+                <div className="flex rounded-lg bg-neutral-100 dark:bg-neutral-800/50 p-0.5">
                     {['1m', '5m', '1h', '1d', '1w'].map(tf => (
                         <button
                             key={tf}
                             onClick={() => setTimeframe(tf)}
-                            className={`px-3 py-1 text-xs transition
+                            className={`px-3 py-1 text-[11px] font-medium rounded-md transition-all
                 ${timeframe === tf
-                                    ? 'bg-neutral-100 dark:bg-neutral-700'
-                                    : 'hover:bg-neutral-50 dark:hover:bg-neutral-800'
+                                    ? 'bg-white dark:bg-neutral-700 shadow-sm text-neutral-900 dark:text-white'
+                                    : 'text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-200'
                                 }`}
                         >
                             {tf}
@@ -231,10 +233,10 @@ export const ChartComponent = () => {
                 </div>
             </div>
 
-            <div ref={containerRef} className="relative flex-grow min-h-[400px]">
+            <div ref={containerRef} className="relative flex-grow h-full min-h-0">
                 {isLoading && (
-                    <div className="absolute inset-0 flex items-center justify-center bg-white/60 dark:bg-neutral-900/60">
-                        <div className="h-8 w-8 rounded-full border-2 border-primary border-t-transparent animate-spin" />
+                    <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-black/50 backdrop-blur-sm z-10">
+                        <div className="h-6 w-6 rounded-full border-2 border-indigo-500 border-t-transparent animate-spin" />
                     </div>
                 )}
             </div>

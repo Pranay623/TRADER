@@ -57,7 +57,7 @@ export default function Navbar() {
     }
 
     return (
-        <nav className="flex items-center justify-between px-4 md:px-6 py-3 bg-[#F9FAFB] dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 transition-colors rounded-xl md:rounded-2xl m-2 md:m-5">
+        <nav className="flex items-center justify-between px-4 md:px-6 py-2.5 bg-[#F9FAFB] dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 transition-colors">
             <div className="flex items-center space-x-2 select-none">
                 {/* Logo Icon */}
                 <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-neutral-900 dark:bg-white">

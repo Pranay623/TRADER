@@ -107,3 +107,9 @@ body {
     box-shadow: none;
   }
 }
+
+@layer utilities {
+  .glass-panel {
+    @apply backdrop-blur-xl bg-white/70 dark:bg-[#121212]/80 border border-white/40 dark:border-white/5 shadow-[0_8px_30px_rgb(0,0,0,0.04)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)];
+  }
+}
